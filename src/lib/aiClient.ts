@@ -1,11 +1,7 @@
 type AIMessage = { role: "system" | "user" | "assistant"; content: string };
 
-// This checks if the key exists in your Vite environment
-const geminiKey = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
-
 async function getGeminiResponse(messages: AIMessage[]) {
-  // CHANGED: Port updated to 5000 to match your updated server.js
-  const response = await fetch("http://localhost:5000/api/gemini", {
+  const response = await fetch("/api/gemini", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -14,28 +10,32 @@ async function getGeminiResponse(messages: AIMessage[]) {
   });
 
   if (!response.ok) {
-    const text = await response.text();
-    throw new Error(text || "Server error");
+    let errorText = "Server error";
+    try {
+      const text = await response.text();
+      errorText = text || errorText;
+    } catch {}
+    throw new Error(errorText);
   }
 
   const data = await response.json();
-  return data.content || "No response";
+
+  if (!data || !data.content) {
+    throw new Error("Invalid response from server");
+  }
+
+  return data.content;
 }
 
 function getDemoResponse() {
-  return "AI service not configured. Make sure VITE_GEMINI_API_KEY is in your .env file.";
+  return "AI service not configured. Please check backend setup.";
 }
 
 export async function getChatResponse(messages: AIMessage[]) {
   try {
-    // Only attempt the call if the key is present
-    if (geminiKey) {
-      return await getGeminiResponse(messages);
-    }
-    return getDemoResponse();
+    return await getGeminiResponse(messages);
   } catch (error: any) {
     console.error("Chat error:", error);
-    // This is the error message shown in your screenshot
     return "Something went wrong. Check backend connection.";
   }
 }
