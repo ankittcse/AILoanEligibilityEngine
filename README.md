@@ -1,4 +1,3 @@
-# Welcome to your Lovable project
 
 This project uses Vite, React, and Supabase for authentication.
 
