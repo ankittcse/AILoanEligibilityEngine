@@ -6,7 +6,7 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - VITE_GEMINI_API_KEY=AIzaSyAKJvpl8Nl8-rvpBnNSK-8IX4915LTkRn4
+      - VITE_GEMINI_API_KEY=AIzaSyBlwN7kJrhSV6xCtGut9GeN4vYYhUEOfUw
 
   frontend:
     build: .
